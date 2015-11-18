@@ -1203,7 +1203,8 @@ types.null = function(name) {
 }
 
 types.boolean = function(name) {
-  return 'typeof '+name+' === "boolean"'
+  return '(typeof '+name+' === "boolean")' +
+      ' || (typeof '+name+' === "string" && /^(true|false)$/.test('+name+'))';
 }
 
 types.array = function(name) {
@@ -1223,7 +1224,7 @@ types.integer = function(name) {
 }
 
 types.string = function(name) {
-  return 'typeof '+name+' === "string"'
+  return 'typeof '+name+' === "string" || ' + types.number(name) + ' || ' + types.boolean(name)
 }
 
 var unique = function(array) {
@@ -1308,7 +1309,9 @@ var compile = function(schema, cache, root, reporter, opts) {
       validate('if (%s !== undefined) {', name)
     }
 
-    var valid = [].concat(type)
+    var allowed = [].concat(type);
+
+    var valid = allowed
       .map(function(t) {
         return types[t || 'any'](name)
       })
