@@ -1,0 +1,2 @@
+foo,bar
+"this is a string, not a number","this is a string that isn't allowed"

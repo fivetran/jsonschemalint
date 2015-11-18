@@ -30,8 +30,8 @@ app.controller('validatorController', function ($scope, $http, $window) {
   this.sample = function(ref) {
     console.debug('sample', ref);
 
-    $http.get('samples/' + ref + '.document.json').success(function(data) {
-      self.document = JSON.stringify(data, null, '  ');
+    $http.get('samples/' + ref + '.document.csv').success(function(data) {
+      self.document = data
     });
     $http.get('samples/' + ref + '.schema.json').success(function(data) {
       self.schema = JSON.stringify(data, null, '  ');
