@@ -40,7 +40,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
   };
 
   function parseCsv(input) {
-    return new csv(input, { header: true}).parse();
+    return new csv(input, { header: true, cast: false }).parse();
   }
 
   this.parseMarkup = function(thing) {
