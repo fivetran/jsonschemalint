@@ -3,11 +3,19 @@
 var app = angular.module('app', false);
 
 app.controller('validatorController', function ($scope, $http, $window) {
-
+  var TEMPLATE =
+      "{\n"+
+      "  \"type\": \"object\",\n"+
+      "  \"properties\": {\n"+
+      "  }, \n"+
+      "  \"additionalProperties\": false\n"+
+      "}";
+  var csv = $window['CSV'];
   var validator = $window['isMyJsonValid'];
-  var YAML = $window['YAML'];
 
   var self = this;
+
+  self.schema = TEMPLATE;
 
   // Load the meta-schema
   $http.get('meta-schema/schema.json').success(function (data) {
@@ -16,7 +24,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
 
   this.reset = function() {
     self.document = "";
-    self.schema = "";
+    self.schema = TEMPLATE;
   };
 
   this.sample = function(ref) {
@@ -31,12 +39,17 @@ app.controller('validatorController', function ($scope, $http, $window) {
 
   };
 
+  function parseCsv(input) {
+    return new csv(input, { header: true}).parse();
+  }
+
   this.parseMarkup = function(thing) {
     try {
       return JSON.parse(thing);
     } catch (e) {
-      console.log('not json, trying yaml');
-      return YAML.parse(thing);
+      console.log('not json, trying csv');
+
+      return parseCsv(thing);
     }
   };
 
@@ -44,7 +57,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
     try {
       return JSON.stringify(JSON.parse(thing), null, '  ');
     } catch (e) {
-      return YAML.stringify(YAML.parse(thing), 4, 2);
+      return JSON.stringify(parseCsv(thing));
     }
   };
 
@@ -55,7 +68,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
       var documentObject = this.parseMarkup(self.document);
       this.document = this.reformatMarkup(self.document);
     } catch (e) {
-      // *shrug*
+      console.log(e);
     }
   };
 
@@ -66,7 +79,7 @@ app.controller('validatorController', function ($scope, $http, $window) {
       var schemaObject = this.parseMarkup(self.schema);
       this.schema = this.reformatMarkup(self.schema);
     } catch (e) {
-      // *shrug*
+      console.log(e);
     }
   };
 
@@ -78,9 +91,9 @@ app.controller('validatorController', function ($scope, $http, $window) {
     // Parse as JSON
     try {
       self.documentObject = this.parseMarkup(self.document);
-
+      var schema = { type: "array", items: this.schemaObject };
       // Do validation
-      var documentValidator = validator(this.schemaObject, {
+      var documentValidator = validator(schema, {
         verbose: true
       });
       documentValidator(this.documentObject);
