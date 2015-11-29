@@ -1217,12 +1217,12 @@ types.object = function(name) {
 
 types.number = function(name) {
   return '(typeof '+name+' === "number")' +
-      ' || (typeof '+name+' === "string" && /^\\d+(\\.\\d+)?$/.test('+name+'))';
+      ' || (typeof '+name+' === "string" && /^-?\\d+(\\.\\d+)?$/.test('+name+'))';
 }
 
 types.integer = function(name) {
   return '(typeof '+name+' === "number" && (Math.floor('+name+') === '+name+' || '+name+' > 9007199254740992 || '+name+' < -9007199254740992))' +
-          ' || (typeof '+name+' === "string" && /^\\d+$/.test('+name+'))';
+          ' || (typeof '+name+' === "string" && /^-?\\d+$/.test('+name+'))';
 }
 
 types.string = function(name) {
