@@ -1581,8 +1581,8 @@ var compile = function(schema, cache, root, reporter, opts) {
       if (type !== 'number' && type !== 'integer') validate('if (%s) {', types.number(name))
 
       var factor = ((node.multipleOf | 0) !== node.multipleOf) ? Math.pow(10, node.multipleOf.toString().split('.').pop().length) : 1
-      if (factor > 1) validate('if ((%d*%s) % %d) {', factor, name, factor*node.multipleOf)
-      else validate('if (%s % %d) {', name, node.multipleOf)
+      if (factor > 1) validate('if (Math.abs((%d*%s) % %d) > Math.abs(%s * 1e-9)) {', factor, name, factor*node.multipleOf, name)
+      else validate('if (Math.abs(%s % %d) > Math.abs(%s * 1e-9)) {', name, node.multipleOf, name)
 
       error('has a remainder')
       validate('}')
