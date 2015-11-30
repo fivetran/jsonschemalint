@@ -1217,7 +1217,7 @@ types.object = function(name) {
 
 types.number = function(name) {
   return '(typeof '+name+' === "number")' +
-      ' || (typeof '+name+' === "string" && /^-?\\d+(\\.\\d+)?$/.test('+name+'))';
+      ' || (typeof '+name+' === "string" && /^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$/.test('+name+'))';
 }
 
 types.integer = function(name) {
